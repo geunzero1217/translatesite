@@ -8,9 +8,9 @@ async function translateToKorean(englishText) {
       "Authorization": `Bearer ${API_KEY}`,
     },
     body: JSON.stringify({
-      model: "gpt-4",
+      model: "gpt-3.5-turbo", // ✅ 더 저렴한 번역용 모델
       messages: [
-        { role: "system", content: "Translate English to Korean." },
+        { role: "system", content: "Translate the following English sentence to Korean." },
         { role: "user", content: englishText }
       ]
     })
@@ -21,6 +21,9 @@ async function translateToKorean(englishText) {
 }
 
 function startTranslation() {
+  const button = document.getElementById("translate-btn");
+  button.innerText = "번역 중...";
+
   const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
   recognition.lang = 'en-US';
   recognition.continuous = true;
@@ -30,12 +33,27 @@ function startTranslation() {
     const englishText = event.results[event.results.length - 1][0].transcript;
     console.log("🎧 인식된 영어:", englishText);
 
-    const koreanText = await translateToKorean(englishText);
-    document.getElementById("subtitle").innerText = koreanText;
+    button.innerText = "번역 중...";
+
+    try {
+      const koreanText = await translateToKorean(englishText);
+
+      const container = document.getElementById("subtitle-container");
+      const line = document.createElement("div");
+      line.className = "subtitle-line";
+      line.innerText = koreanText;
+      container.appendChild(line);
+      container.scrollTop = container.scrollHeight;
+    } catch (error) {
+      alert("번역 실패: " + error.message);
+    }
+
+    button.innerText = "번역 시작";
   };
 
   recognition.onerror = (event) => {
-    console.error("음성 인식 오류:", event.error);
+    alert("음성 인식 오류: " + event.error);
+    button.innerText = "번역 시작";
   };
 
   recognition.start();
