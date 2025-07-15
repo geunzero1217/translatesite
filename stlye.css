@@ -1,0 +1,13 @@
+body {
+    background: #111;
+    color: #0ff;
+    font-family: sans-serif;
+    text-align: center;
+    padding-top: 50px;
+  }
+  
+  #subtitle {
+    margin-top: 30px;
+    font-size: 24px;
+    color: #fff;
+  }
